@@ -1,0 +1,200 @@
+﻿<UserControl x:Class="Views.AddShowView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:TvShows"
+             xmlns:viewmodels="clr-namespace:TvShows.ViewModels"
+             xmlns:infrastructure="clr-namespace:TvShows.Infrastructure"
+             xmlns:views="clr-namespace:TvShows.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="800">
+    <UserControl.DataContext>
+        <viewmodels:AddShowViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid MaxWidth="600">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <!--Searching-->
+                <!-- Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+                <Grid  Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Add New Show"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="1"
+                                FocusManager.FocusedElement="{Binding ElementName=ShowNameTextBox}">
+                        <TextBox x:Name="ShowNameTextBox"
+                                 Width="400"
+                                 Margin="5"
+                                 Text="{Binding QueryString, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return"
+                                            Command="{Binding SearchCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Content="Search"
+                                Command="{Binding SearchCommand}"
+                                Margin="5" />
+                    </StackPanel>
+                    <ListView Grid.Row="2"
+                              Margin="5"
+                              ItemsSource="{Binding SearchResults}"
+                              SelectedItem="{Binding SelectedTvShow}"
+                              SelectionMode="Single"
+                              HorizontalContentAlignment="Stretch"
+                              BorderBrush="Transparent"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              Background="Transparent"
+                              Foreground="{StaticResource Foreground}">
+                        <ListView.Resources>
+                            <!--<SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="{DynamicResource BackgroundSelectedColor}"/>-->
+                            <!--<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Green" />-->
+                        </ListView.Resources>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding PosterPath, Converter={infrastructure:PosterPathConverter}}"
+                                           Height="91"
+                                           Width="63"
+                                           VerticalAlignment="Top" />
+                                    <StackPanel Grid.Column="1"
+                                                Margin="5,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}"
+                                                       Margin="0,0,5,0"
+                                                       FontSize="14.667" />
+                                            <TextBlock Text="{Binding Year, Mode=OneWay}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,5,0" />
+                                            <TextBlock Text="{Binding OriginCountry}"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding OverviewSnip}"
+                                                   TextWrapping="Wrap"
+                                                   MaxWidth="500"
+                                                   Margin="0,5" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected"
+                                             Value="True">
+                                        <Setter Property="Background"
+                                                Value="Red" />
+                                        <Setter Property="Background"
+                                                Value="{StaticResource BackgroundSelected}" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter Property="Background"
+                                                Value="{StaticResource BorderBrushSelected}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+                <!--Configuring-->
+                <!-- Visibility="{Binding IsConfiguring, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+                <Grid Visibility="{Binding IsConfiguring, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="16"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="Adding {0} {1}">
+                                <Binding Path="SelectedTvShow.Name" />
+                                <Binding Path="SelectedTvShow.Year" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Show Folder:  "
+                                   VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding ShowFolderName}" />
+                        <Button Content="..."
+                                Grid.Column="2"
+                                Margin="5"
+                                MinWidth="35"
+                                Command="{Binding BrowseForFolderCommand}" />
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="0,5">
+                            Relative paths are relative to the "Root Path":
+                            <TextBlock Text="{Binding Default.TvShowRootPath, UpdateSourceTrigger=PropertyChanged}"
+                                       DataContext="{x:Static local:MySettings.Default}" />
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!--Command Buttons-->
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="1"
+                        Margin="20"
+                        HorizontalAlignment="Right">
+                <Button Content="&lt; Back"
+                        Margin="0,0,10,0"
+                        Command="{Binding MovePreviousCommand}" />
+                <Button Content="Next &gt;"
+                        Margin="0,0,10,0"
+                        Visibility="{Binding IsSearching, Converter={StaticResource  BooleanToVisibilityConverter}}"
+                        Command="{Binding MoveNextCommand}" />
+                <Button Content="AddShow"
+                        Margin="0,0,10,0"
+                        Visibility="{Binding IsConfiguring, Converter={StaticResource  BooleanToVisibilityConverter}}"
+                        Command="{Binding AddShowCommand}" />
+                <Button Content="Cancel"
+                        Command="{Binding CancelCommand}" />
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding IsWorking, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <local:LoadingControl Background="{StaticResource Background}" />
+            <TextBlock Text="Adding Show"
+                       HorizontalAlignment="Center"
+                       FontSize="16"
+                       Margin="40" />
+        </Grid>
+
+    </Grid>
+</UserControl>

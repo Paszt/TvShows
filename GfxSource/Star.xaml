@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DrawingBrush x:Key="Layer_1" Stretch="Uniform"/>
+	<DrawingBrush x:Key="Layer_1_0" Stretch="Uniform"/>
+	<DrawingBrush x:Key="Layer_1_1" Stretch="Uniform">
+		<DrawingBrush.Drawing>
+			<DrawingGroup>
+				<DrawingGroup.Children>
+					<GeometryDrawing Brush="#FFCC9900" Geometry="F1 M 96.2684,85.9778C 95.5404,83.7378 96.3417,81.2711 98.2471,79.8858L 131.812,55.4924C 134.691,53.3991 133.211,48.8418 129.651,48.8418L 88.1644,48.8391C 85.8097,48.8391 83.7111,47.3138 82.9831,45.0738L 70.1604,5.59247C 69.0617,2.20844 64.2724,2.20844 63.1724,5.59247L 50.3511,45.0724C 49.6231,47.3124 47.5244,48.8364 45.1697,48.8364L 3.68307,48.8338C 0.123067,48.8338 -1.35827,53.3898 1.52173,55.4831L 35.0871,79.8804C 36.9924,81.2657 37.7937,83.7324 37.0671,85.9725L 24.2444,125.452C 23.1444,128.838 27.0204,131.652 29.8991,129.56L 63.4671,105.163C 65.3724,103.779 67.9657,103.779 69.8711,105.163L 103.435,129.559C 106.312,131.652 110.188,128.838 109.09,125.452L 96.2684,85.9778 Z "/>
+				</DrawingGroup.Children>
+			</DrawingGroup>
+		</DrawingBrush.Drawing>
+	</DrawingBrush>
+</ResourceDictionary>

@@ -1,0 +1,358 @@
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:TvShows"
+             xmlns:ViewModels="clr-namespace:TvShows.ViewModels"
+             xmlns:Infrastructure="clr-namespace:TvShows.Infrastructure"
+             xmlns:ex="clr-namespace:TvShows.Extended"
+             x:Class="Views.ShowView"
+             mc:Ignorable="d"
+             d:DesignHeight="900"
+             d:DesignWidth="1000"
+             d:DataContext="{d:DesignInstance {x:Type ViewModels:ShowViewModel}}">
+    <UserControl.Resources>
+        <Infrastructure:PosterPathConverter x:Key="PosterPathConverter" />
+        <Infrastructure:BackdropPathConverter x:Key="BackdropPathConverter" />
+        <Infrastructure:BindingProxy x:Key="proxy"
+                                     Data="{Binding}" />
+        <Infrastructure:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Infrastructure:EpisodesSampleData x:Key="EpisodesSampleData" />
+        <Style TargetType="TextBlock"
+               x:Key="TextBlockAutoTooltip">
+            <Style.Triggers>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="ex:TextBlockAutoTooltip.AutomaticToolTipEnabled"
+                                   Value="True" />
+                        <Condition Property="ex:TextBlockAutoTooltip.IsTextTrimmed"
+                                   Value="True" />
+                    </MultiTrigger.Conditions>
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=Text}" />
+                </MultiTrigger>
+            </Style.Triggers>
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Esc"
+                    Command="{Binding CloseCommand}" />
+    </UserControl.InputBindings>
+    <Grid>
+        <Image Source="{Binding BackdropPath, Converter={StaticResource BackdropPathConverter}, ConverterParameter=original}"
+               DataContext="{Binding TvShow}"
+               Opacity=".2"
+               Stretch="UniformToFill" />
+        <Grid Margin="10,20"
+              MaxWidth="1000">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,30,0"
+                        VerticalAlignment="Top"
+                        DataContext="{Binding TvShow}">
+                <Image Source="{Binding PosterPath, Converter={StaticResource PosterPathConverter}}"
+                       Width="185" />
+                <Image Source="{Binding BackdropPath, Converter={StaticResource BackdropPathConverter}}"
+                       Width="185"
+                       Margin="0,10" />
+            </StackPanel>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <!-- TV Show Details -->
+                <StackPanel DataContext="{Binding TvShow}">
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,0,5,10">
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type Button}"
+                                   BasedOn="{StaticResource ImageButtonStyle}">
+                                <Setter Property="Width"
+                                        Value="26" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <TextBlock Text="{Binding Name}"
+                                   VerticalAlignment="Center"
+                                   FontSize="14.667"
+                                   Margin="0,0,0,2" />
+                        <Button Command="{Binding ToggleIsFavorite}"
+                                Width="22"
+                                Margin="5,0,0,2">
+                            <Grid>
+                                <Image Source="{DynamicResource StarOffDrawingImage}" />
+                                <Image Source="{DynamicResource StarOnDrawingImage}"
+                                       Visibility="{Binding IsFavorite, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                        </Button>
+                        <Button Command="{Binding GotoTmdbPageCommand}"
+                                ToolTip="View on TMDb.org">
+                            <Image Source="{DynamicResource TmdbDrawingImage}" />
+                        </Button>
+                        <Button Command="{Binding GotoImdbPageCommand}"
+                                ToolTip="View on imdb.com">
+                            <Image Source="{DynamicResource ImdbDrawingImage}" />
+                        </Button>
+                        <Button Command="{Binding GotoLocalFolderCommand}"
+                                ToolTip="Open local folder">
+                            <Image Source="{DynamicResource FolderOpenDrawingImage}" />
+                        </Button>
+                        <Menu Background="Transparent">
+                            <MenuItem>
+                                <MenuItem.Header>
+                                    <Image Source="{DynamicResource UpdateDrawingImage}"
+                                           Height="22"
+                                           Margin="0,2,0,0" />
+                                </MenuItem.Header>
+                                <MenuItem Header="Full Update"
+                                          Command="{Binding Data.FullUpdateCommand, Source={StaticResource proxy}}" />
+                                <MenuItem Header="File Paths Only"
+                                          Command="{Binding Data.UpdateEpisodePathsCommand, Source={StaticResource proxy}}" />
+                            </MenuItem>
+                        </Menu>
+                        <ToggleButton Style="{DynamicResource ToggleToolbarButtonStyle}"
+                                      Width="24"
+                                      Height="24"
+                                      DataContext="{x:Static local:MySettings.Default}"
+                                      IsChecked="{Binding Default.ShowEpisodeImages}"
+                                      ToolTip="Show Episode Images">
+                            <Image Source="{DynamicResource ImageDrawingImage}" />
+                        </ToggleButton>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding Overview}"
+                               MinHeight="45"
+                               TextWrapping="WrapWithOverflow" />
+                    <!--Full Directory Path-->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock  Grid.Column="1"
+                                    Margin="5"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding FullDirectoryPath}" />
+                        <Button MinWidth="20"
+                                Width="20"
+                                Grid.Column="2"
+                                Height="20"
+                                Command="{Binding Data.BrowseForDirectoryCommand, Source={StaticResource proxy}}"
+                                Style="{DynamicResource ToolbarButtonStyle}">
+                            <Image Source="{DynamicResource PencilDrawingImage}" />
+                        </Button>
+                    </StackPanel>
+                    <!--Set selected episodes ...-->
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,10,0,0">
+                        <CheckBox Margin="-6,0,0,0"
+                                  ToolTip="Select all episodes"
+                                  Command="{Binding Data.SelectAllEpisodesCommand, Source={StaticResource proxy}}"
+                                  CommandParameter="{Binding RelativeSource={RelativeSource Self}}" />
+                        <StackPanel Orientation="Horizontal"
+                                    Visibility="{Binding Data.IsEpisodeSelected, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource proxy}}">
+                            <TextBlock Text="Set selected episodes to: "
+                                       VerticalAlignment="Center" />
+                            <ComboBox x:Name="ArchivedComboBox"
+                                      Width="90"
+                                      Height="28">
+                                <ComboBoxItem Content="Archived" />
+                                <ComboBoxItem Content="Not Archived" />
+                            </ComboBox>
+                            <Button Content="Do it"
+                                    Margin="5,0"
+                                    MinWidth="55"
+                                    Command="{Binding Data.SetEpisodesArchivedCommand, Source={StaticResource proxy}}"
+                                    CommandParameter="{Binding ElementName=ArchivedComboBox}" />
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- ItemsSource="{Binding Source={StaticResource Episodes}}" -->
+                <ListView Background="Transparent"
+                          BorderThickness="0"
+                          ItemsSource="{Binding EpisodesCollectionView}"
+                          Margin="0,5,0,0"
+                          Foreground="{StaticResource Foreground}"
+                          Grid.IsSharedSizeScope="True"
+                          Grid.Row="1"
+                          d:DataContext="{StaticResource EpisodesSampleData}">
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Command="{Binding Data.SeasonCheckBoxCheckedCommand, Source={StaticResource proxy}}"
+                                                  CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                                                  Tag="{Binding}" />
+                                        <TextBlock x:Name="HeaderTextBlock"
+                                                   FontSize="15"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding Name, StringFormat=Season {0}}" />
+                                        <TextBlock x:Name="SpecialsTextBlock"
+                                                   Text="Specials"
+                                                   FontWeight="Bold"
+                                                   FontSize="15"
+                                                   VerticalAlignment="Center"
+                                                   Visibility="Collapsed" />
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Name}"
+                                                     Value="0">
+                                            <Setter TargetName="SpecialsTextBlock"
+                                                    Property="Visibility"
+                                                    Value="Visible" />
+                                            <Setter TargetName="HeaderTextBlock"
+                                                    Property="Visibility"
+                                                    Value="Collapsed" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <DataTemplate.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Center" />
+                                    <Setter Property="Margin"
+                                            Value="10,0" />
+                                </Style>
+                            </DataTemplate.Resources>
+                            <Grid Margin="12,0,0,0"
+                                  Background="Transparent">
+                                <Grid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Delete"
+                                                  Command="{Binding Data.DeleteEpisodeByIdCommand, Source={StaticResource proxy}}"
+                                                  CommandParameter="{Binding}" />
+                                    </ContextMenu>
+                                </Grid.ContextMenu>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ex:ColumnDefinitionExtended Width="150"
+                                                                 Visible="{Binding Default.ShowEpisodeImages, 
+                                                                                   Source={x:Static local:MySettings.Default}}" />
+                                    <ColumnDefinition Width="60" />
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <!--<ex:RowDefinitionExtended Visible="{Binding Default.ShowEpisodeImages, 
+                                                                                Source={x:Static local:MySettings.Default}}" />-->
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <!--isSelected-->
+                                <CheckBox Grid.Column="0"
+                                          IsChecked="{Binding IsSelected}" />
+                                <!--episodeImage-->
+                                <Image Grid.Column="1"
+                                       Width="150"
+                                       Margin="0,5,0,5"
+                                       Grid.RowSpan="2"
+                                       VerticalAlignment="Top"
+                                       Source="{Binding StillPath, Converter={StaticResource BackdropPathConverter}}"
+                                       Visibility="{Binding Default.ShowEpisodeImages, 
+                                                            Converter={StaticResource BooleanToVisibilityConverter}, 
+                                                            Source={x:Static local:MySettings.Default}}" />
+                                <!--episodeNumber-->
+                                <TextBlock Grid.Column="2"
+                                           Margin="10,5"
+                                           Text="{Binding SeasonEpisodeString}" />
+                                <!--episodeName-->
+                                <TextBlock Grid.Column="3"
+                                           Margin="10,0"
+                                           Text="{Binding Name}"
+                                           MaxWidth="300"
+                                           TextTrimming="CharacterEllipsis"
+                                           Style="{StaticResource TextBlockAutoTooltip}"
+                                           HorizontalAlignment="Left"
+                                           ex:TextBlockAutoTooltip.AutomaticToolTipEnabled="True" />
+                                <!--episodeOverview-->
+                                <Border Grid.Column="4"
+                                        Visibility="{Binding ShowEpisodeImagesInverted, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Image Width="20"
+                                           Margin="5,0"
+                                           ToolTip="{Binding Overview}"
+                                           ToolTipService.ShowDuration="400000"
+                                           Source="{DynamicResource CalloutDrawingImage}"
+                                           Visibility="{Binding HasOverview, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </Border>
+                                <!--airDate-->
+                                <TextBlock Grid.Column="5"
+                                           Margin="10,0"
+                                           ToolTip="{Binding AirDateLong}"
+                                           Text="{Binding AirDateString}" />
+                                <!--episodeFileName-->
+                                <Image ToolTip="{Binding FullFilePath}"
+                                       Margin="10,0"
+                                       Width="16"
+                                       Grid.Column="6"
+                                       Source="{DynamicResource FileDrawingImage}"
+                                       Visibility="{Binding HasFilePath, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                <!--episodeOverview expanded-->
+                                <TextBlock Grid.Column="2"
+                                           Grid.Row="1"
+                                           Grid.ColumnSpan="5"
+                                           TextWrapping="Wrap"
+                                           MaxWidth="550"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Top"
+                                           Margin="10,0,10,10"
+                                           Text="{Binding Overview}"
+                                           Visibility="{Binding Default.ShowEpisodeImages, 
+                                                                Converter={StaticResource BooleanToVisibilityConverter}, 
+                                                                Source={x:Static local:MySettings.Default}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <Border x:Name="Bd">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsAvailable}"
+                                                         Value="True">
+                                                <Setter TargetName="Bd"
+                                                        Property="Background"
+                                                        Value="#4C5F1919" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsCollected}"
+                                                         Value="True">
+                                                <Setter TargetName="Bd"
+                                                        Property="Background"
+                                                        Value="#3FC2FFCD" />
+                                            </DataTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+            <Button Grid.Column="1"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Right"
+                    Width="28"
+                    ToolTip="Close"
+                    Command="{Binding CloseCommand}"
+                    Style="{DynamicResource WindowButtonStyle}">
+                <Path Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+                      SnapsToDevicePixels="True"
+                      Fill="{DynamicResource Foreground}" />
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>

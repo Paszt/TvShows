@@ -1,0 +1,44 @@
+﻿<local:FlatWindow x:Class="MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:local="clr-namespace:TvShows"
+                  xmlns:viewmodels="clr-namespace:TvShows.ViewModels"
+                  xmlns:views="clr-namespace:TvShows.Views"
+                  mc:Ignorable="d"
+                  Title="TV Shows"
+                  Height="350"
+                  Width="525"
+                  Background="{DynamicResource Background}"
+                  MinHeight="500"
+                  MinWidth="500"
+                  ShowStatusBar="False">
+    <local:FlatWindow.Resources>
+        <DataTemplate DataType="{x:Type viewmodels:AddShowViewModel}">
+            <views:AddShowView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:OptionsViewModel}">
+            <views:OptionsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ShowListViewModel}">
+            <views:ShowListView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ImportFromFoldersViewModel}">
+            <views:ImportFromFolderView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:ShowViewModel}">
+            <views:ShowView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:UpcomingEpisodesViewModel}">
+            <views:UpcomingEpisodesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewmodels:EpisodeListViewModel}">
+            <views:EpisodeListView />
+        </DataTemplate>
+    </local:FlatWindow.Resources>
+    <Grid>
+        <ContentPresenter x:Name="MainContentPresenter"
+                          Grid.Row="1" />
+    </Grid>
+</local:FlatWindow>
