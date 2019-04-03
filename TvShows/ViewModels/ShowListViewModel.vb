@@ -129,6 +129,28 @@ Namespace ViewModels
             End Set
         End Property
 
+        Private _statusBarText As String
+        Public Property StatusBarText As String
+            Get
+                Return _statusBarText
+            End Get
+            Set(value As String)
+                If SetProperty(_statusBarText, value) Then
+                    IsStatusBarVisible = True
+                End If
+            End Set
+        End Property
+
+        Private _isStatusBarVisible As Boolean = False
+        Public Property IsStatusBarVisible As Boolean
+            Get
+                Return _isStatusBarVisible
+            End Get
+            Set(value As Boolean)
+                SetProperty(_isStatusBarVisible, value)
+            End Set
+        End Property
+
 #End Region
 
 #Region " Commands "
@@ -238,9 +260,18 @@ Namespace ViewModels
                                     Exit Sub
                                 End If
                                 IsUpdatingShows = True
+                                _isShowsUpdateCancelPending = False
                                 Using rg As New RateGate(30, TimeSpan.FromSeconds(10))
                                     For Each show In innerTvShows
+                                        If _isShowsUpdateCancelPending Then
+                                            InitializeTvShowsCollecionViewSource()
+                                            StatusBarText = "Update Cancelled"
+                                            _isShowsUpdateCancelPending = False
+                                            IsUpdatingShows = False
+                                            Exit Sub
+                                        End If
                                         rg.WaitToProceed()
+                                        StatusBarText = "Updating Shows. Current Show: " & show.Name
                                         show.FullUpdate()
                                         InitializeTvShowsCollecionViewSource()
                                     Next
@@ -256,6 +287,23 @@ Namespace ViewModels
             Get
                 Return New RelayCommand(Sub()
                                             TextFilter = String.Empty
+                                        End Sub)
+            End Get
+        End Property
+
+        Public ReadOnly Property HideStatusBarCommand As ICommand
+            Get
+                Return New RelayCommand(Sub()
+                                            IsStatusBarVisible = False
+                                        End Sub)
+            End Get
+        End Property
+
+        Private _isShowsUpdateCancelPending As Boolean = False
+        Public ReadOnly Property CancelShowsUpdateCommand As ICommand
+            Get
+                Return New RelayCommand(Sub()
+                                            _isShowsUpdateCancelPending = True
                                         End Sub)
             End Get
         End Property

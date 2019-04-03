@@ -92,7 +92,7 @@
                         </Button>
                         <Button Command="{Binding GotoTmdbPageCommand}"
                                 ToolTip="View on TMDb.org">
-                            <Image Source="{DynamicResource TmdbDrawingImage}" />
+                            <Image Source="{DynamicResource Tmdb2016DrawingBrush}" />
                         </Button>
                         <Button Command="{Binding GotoImdbPageCommand}"
                                 ToolTip="View on imdb.com">
@@ -115,9 +115,13 @@
                                           Command="{Binding Data.UpdateEpisodePathsCommand, Source={StaticResource proxy}}" />
                             </MenuItem>
                         </Menu>
+                        <Button Command="{Binding Data.RepairEpisodesCommand, Source={StaticResource proxy}}"
+                                ToolTip="Remove Dupes">
+                            <Image Source="{DynamicResource RepairDrawingImage}" Width="20"/>
+                        </Button>
                         <ToggleButton Style="{DynamicResource ToggleToolbarButtonStyle}"
                                       Width="24"
-                                      Height="24"
+                                      Margin="5,0,0,0"
                                       DataContext="{x:Static local:MySettings.Default}"
                                       IsChecked="{Binding Default.ShowEpisodeImages}"
                                       ToolTip="Show Episode Images">

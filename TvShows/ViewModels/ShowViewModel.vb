@@ -180,6 +180,19 @@ Namespace ViewModels
             End Get
         End Property
 
+        Public ReadOnly Property RepairEpisodesCommand As ICommand
+            Get
+                Return New RelayCommand(
+                    Sub()
+                        Dim result = TvShow.RepairEpisodes()
+                        If Not String.IsNullOrEmpty(result.Message) Then
+                            MessageWindow.ShowDialog(result.Message, TvShow.Name & " - Episode Repair Results")
+                        End If
+                        EpisodesCollectionView.Refresh()
+                    End Sub)
+            End Get
+        End Property
+
         Public ReadOnly Property DeleteEpisodeByIdCommand As ICommand
             Get
                 Return New RelayCommand(Of Episode)(

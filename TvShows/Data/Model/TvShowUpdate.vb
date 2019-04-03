@@ -55,9 +55,6 @@ Namespace Model
                     curEp.Update(ep)
                 Else
                     Dim epi As Episode = Episode.NewFromRemote(ep, Me)
-                    'ep.TvShow = Me
-                    'ep.EntityState = EntityState.Added
-                    'Episodes.Add(ep)
                     Episodes.Add(epi)
                 End If
             Next
@@ -125,6 +122,40 @@ Namespace Model
             Else
                 Return Episodes.Where(Function(e) e.SeasonNumber = seasonNo And e.EpisodeNumber = episodeNo).FirstOrDefault()
             End If
+        End Function
+
+        Public Function RepairEpisodes() As Infrastructure.ActionResult
+            Dim result = New Infrastructure.ActionResult()
+            'Dim dupes = Episodes.
+            '               GroupBy(Function(e) New With {e.SeasonNumber, e.EpisodeNumber}).
+            '               Where(Function(g) g.Count() >= 1).
+            '               Select(Function(g) g.Key).ToList()
+            'Stop
+            'For Each epDupe In dupes
+
+            'Next
+
+            Dim dupIds As New List(Of Integer)
+            For Each ep In Episodes
+                Dim eps = Episodes.Where(Function(e) e.EpisodeNumber = ep.EpisodeNumber AndAlso e.SeasonNumber = ep.SeasonNumber).ToList()
+                If eps.Count > 1 Then
+                    For Each e In eps.Skip(1)
+                        dupIds.Add(e.Id.Value)
+                    Next
+                End If
+            Next
+
+            For Each Id As Integer In dupIds.Distinct()
+                Episodes.Where(Function(e) e.Id.Value = Id).First().EntityState = EntityState.Deleted
+            Next
+
+            Dim bl As New BLL.BuinessLayer
+            Dim updateResult = bl.UpdateTvShow(Me)
+            If Not updateResult.Succeeded Then
+                result.Message = updateResult.Message
+            End If
+
+            Return result
         End Function
 
     End Class

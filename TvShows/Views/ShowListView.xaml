@@ -24,6 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal"
                     Margin="10">
@@ -225,6 +226,8 @@
                                 </StackPanel>
 
                                 <Grid Margin="0,7,0,5">
+                                    <TextBlock Text="{Binding XofYEpisodes}"
+                                               HorizontalAlignment="Left" Margin="5,0,0,0"/>
                                     <TextBlock HorizontalAlignment="Right"
                                                Text="{Binding Progress, Mode=OneWay, StringFormat=' \{0\} %'}" />
                                 </Grid>
@@ -272,6 +275,22 @@
             <local:LoadingControl VerticalAlignment="Stretch"
                                   Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
-
+        <StackPanel Orientation="Horizontal"
+                    Background="{DynamicResource BackgroundSelected}"
+                    Grid.Row="2"
+                    Visibility="{Binding IsStatusBarVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="{Binding StatusBarText}"
+                       Margin="5" />
+            <Button Content="Cancel Update"
+                    Style="{DynamicResource ToolbarButtonStyle}"
+                    Margin="20,0"
+                    Visibility="{Binding IsUpdatingShows, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Command="{Binding CancelShowsUpdateCommand}" />
+            <Button Content="X"
+                    Style="{DynamicResource ToolbarButtonStyle}"
+                    Command="{Binding HideStatusBarCommand}"
+                    ToolTip="Close"
+                    Margin="5,0" />
+        </StackPanel>
     </Grid>
 </UserControl>

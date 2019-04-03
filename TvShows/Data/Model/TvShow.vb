@@ -168,6 +168,17 @@ Namespace Model
         End Property
 
         <NotMapped>
+        Public ReadOnly Property XofYEpisodes As String
+            Get
+                Dim returnString = EpisodesCollectedCount & " of " & EpisodesAvailableCount & " episodes"
+                If Seasons IsNot Nothing Then
+                    returnString &= ", " & Seasons.Count & " seasons"
+                End If
+                Return returnString
+            End Get
+        End Property
+
+        <NotMapped>
         Public ReadOnly Property IsCompletelyCollected As Boolean
             Get
                 Return Progress = 100
