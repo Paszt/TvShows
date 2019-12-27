@@ -69,7 +69,6 @@ Namespace Tmdb
 #Region " Helper Methods "
 
         Private Shared Function GetApiResponse(url As String) As String
-            My.Application.rg.WaitToProceed()
             Return Infrastructure.WebResources.DownloadString(url)
         End Function
 

@@ -6,10 +6,7 @@ Class Application
 
     Private showListModel As ViewModels.ShowListViewModel
 
-    Public rg As Infrastructure.RateGate
-
     Private Sub Application_Startup(sender As Object, e As StartupEventArgs) Handles Me.Startup
-        rg = New Infrastructure.RateGate(38, TimeSpan.FromSeconds(10))
         showListModel = New ViewModels.ShowListViewModel()
     End Sub
 
@@ -107,9 +104,5 @@ Class Application
             Return _tmdbConfig.Image.BaseUrl
         End Get
     End Property
-
-    Private Sub Application_Exit(sender As Object, e As ExitEventArgs) Handles Me.Exit
-        rg.Dispose()
-    End Sub
 
 End Class

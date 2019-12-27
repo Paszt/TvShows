@@ -261,21 +261,18 @@ Namespace ViewModels
                                 End If
                                 IsUpdatingShows = True
                                 _isShowsUpdateCancelPending = False
-                                Using rg As New RateGate(30, TimeSpan.FromSeconds(10))
-                                    For Each show In innerTvShows
-                                        If _isShowsUpdateCancelPending Then
-                                            InitializeTvShowsCollecionViewSource()
-                                            StatusBarText = "Update Cancelled"
-                                            _isShowsUpdateCancelPending = False
-                                            IsUpdatingShows = False
-                                            Exit Sub
-                                        End If
-                                        rg.WaitToProceed()
-                                        StatusBarText = "Updating Shows. Current Show: " & show.Name
-                                        show.FullUpdate()
+                                For Each show In innerTvShows
+                                    If _isShowsUpdateCancelPending Then
                                         InitializeTvShowsCollecionViewSource()
-                                    Next
-                                End Using
+                                        StatusBarText = "Update Cancelled"
+                                        _isShowsUpdateCancelPending = False
+                                        IsUpdatingShows = False
+                                        Exit Sub
+                                    End If
+                                    StatusBarText = "Updating Shows. Current Show: " & show.Name
+                                    show.FullUpdate()
+                                    InitializeTvShowsCollecionViewSource()
+                                Next
                                 IsUpdatingShows = False
                             End Sub)
                         th.Start()

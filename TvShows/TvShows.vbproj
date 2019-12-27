@@ -118,7 +118,6 @@
     <Compile Include="Infrastructure\Iso639_1.vb" />
     <Compile Include="Infrastructure\MessageWindow.xaml.vb" />
     <Compile Include="Infrastructure\NotifyPropertyChanged.vb" />
-    <Compile Include="Infrastructure\RateGate.vb" />
     <Compile Include="Infrastructure\RelayCommand.vb" />
     <Compile Include="Extensions\WinAPI.vb" />
     <Compile Include="Extensions\WindowExtensions.vb" />
